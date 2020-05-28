@@ -21,7 +21,8 @@ class Content(object):
         return result
 
     def getStored(self):
-        q="SELECT storedpkt.id, storedpkt.note, packets.packet FROM packets INNER JOIN storedpkt ON packets.id = storedpkt.id;"
+        q=("SELECT storedpkt.id, storedpkt.note, packets.packet FROM packets "
+            "INNER JOIN storedpkt ON packets.id = storedpkt.id;")
         self.cur.execute(q)
         result = self.cur.fetchall()
         for row in result:
@@ -63,6 +64,9 @@ class Content(object):
         self.cur.execute(q)
         q="DELETE FROM storedpkt WHERE id={};".format(id)
         self.cur.execute(q)
+        q="SET SQL_SAFE_UPDATES=0;DELETE FROM seqpkt WHERE pktid={};".format(id)
+        print (q)
+        self.cur.execute(q,multi=True)
         self.db.commit()
 
     def getSeqs(self):
@@ -70,18 +74,29 @@ class Content(object):
         self.cur.execute(q)
         p= self.cur.fetchall()
         for s in p:
-            q="SELECT seqord, pktid FROM seqpkt WHERE seqid={};".format(s['seqid'])
+            q="SELECT pktnum, pktid FROM seqpkt WHERE seq={} ORDER BY pktnum ASC;".format(s['seqid'])
             self.cur.execute(q)
             p1= self.cur.fetchall()
             s['pkts']=p1
         return p
 
-    def addToSeq(self,seq,id):
-        q="INSERT INTO seqpkt (seqid,seqord,pktid) VALUES ({},{},{});".format(seq,10,id)
+    def addSeqs(self):
+        q="INSERT INTO sequences (delay) VALUES (10);"
         self.cur.execute(q)
         self.db.commit()
 
-    def delFromSeq(self,seq,id):
-        q="DELETE FROM seqpkt WHERE seqid={} AND pktid={};".format(seq,id)
+    def updateSeq(self,seq,field,val):
+        q="UPDATE sequences SET {} = '{}' WHERE seqid = {};".format(field,val,seq)
+        self.cur.execute(q)
+
+    def addToSeq(self,seq,id):
+        q=("INSERT INTO seqpkt (pktnum,seq,pktid) SELECT "
+            "IFNULL(MAX(pktnum),0)+1, {}, {} FROM seqpkt WHERE seq={};".format(seq,id, seq))
+        self.cur.execute(q)
+        self.db.commit()
+
+    def delFromSeq(self,seq,num):
+        q="DELETE FROM seqpkt WHERE seq={} AND pktnum={};".format(seq,num)
+        print(q)
         self.cur.execute(q)
         self.db.commit()

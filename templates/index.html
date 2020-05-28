@@ -2,22 +2,35 @@
    <head>
       <title>{{ title }}</title>
       <link rel="stylesheet" href='../static/style.css'/>
+      {% if refresh %}
+      <meta http-equiv="refresh" content="2">
+      {% endif %}
   </head>
     <body>
+      <form action="/" method="POST">
       <h1>PLC sniffer</h1>
-      <div class="button_c" align="left">
-        <a class="button1" href="/stored" rel="nofollow noopener">
+      <div class="button_c">
+        <button class="button1" align="left" id=1 type="submit" name="action" value="stored" rel="nofollow noopener">
           Stored
-        </a>
+        </button>
         {% if record==False %}
-        <a class="button1" href="/?rec=1" rel="nofollow noopener">
-            Record
-        </a>
+        <button class="button1" align="left" id=2 type="submit" name="action" value="rec" rel="nofollow noopener">
+          Record
+        </button>
         {% else %}
-        <a class="button1" href="/?rec=0" rel="nofollow noopener">
+        <button class="button1" align="left" id=3 type="submit" name="action" value="stop" rel="nofollow noopener">
           Stop recording
-        </a>
+        </button>
         {% endif %}
+        <button class="button1" align="right" id=4 type="submit" name="action" value="pgdn" rel="nofollow noopener">
+          <<
+        </button>
+        <button class="button1" align="right" id=5 type="submit" name="action" value="pgup" rel="nofollow noopener">
+          >>
+        </button>
+        <button class="button1" align="right" id=6 type="submit" name="action" value="top" rel="nofollow noopener">
+          >|
+        </button>
     </div>
       <table class="responstable" id="packets" style="width:100%"><tbody><tr>
         <th width='24'>Id</th>
@@ -25,16 +38,18 @@
         <th>Packet</th>
         <th width='180'>Note</th>
         <th width='18'>Length</th>
+        <th width='10'>Del</th>
       </tr>
       {% for row in rows %}
-        <tr onclick="getElementById('pktnum').click()" style="cursor: pointer">
+        <tr>
           <td><a href="pkt?id={{ row['id'] }}" id="pktnum"> {{ row['id'] }}</a></td>
           <td> {{ row['time'] }}</td>
           <td> {{ row['packet'] }}</td>
           <td> {% if row['note'] %} {{ row['note'] }} {% endif %} </td>
           <td> {{ row['len'] }}</td>
+          <td><input type="checkbox" name="del_{{ row['id'] }}" onchange="this.form.submit()" /></td>
         </tr>
       {% endfor %}
-      </tbody></table>
+      </tbody></table></form>
    </body>
 </html>
