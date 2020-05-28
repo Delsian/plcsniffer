@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+   <head>
+      <title>{{ title }}</title>
+      <link rel="stylesheet" href='../static/style.css'/>
+  </head>
+    <body>
+      <h1>PLC sniffer</h1>
+      <div class="button_c" align="left">
+        <a class="button1" href="/stored" rel="nofollow noopener">
+          Stored
+        </a>
+        {% if record==False %}
+        <a class="button1" href="/?rec=1" rel="nofollow noopener">
+            Record
+        </a>
+        {% else %}
+        <a class="button1" href="/?rec=0" rel="nofollow noopener">
+          Stop recording
+        </a>
+        {% endif %}
+    </div>
+      <table class="responstable" id="packets" style="width:100%"><tbody><tr>
+        <th width='24'>Id</th>
+        <th width='180'>Timestamp</th>
+        <th>Packet</th>
+        <th width='180'>Note</th>
+        <th width='18'>Length</th>
+      </tr>
+      {% for row in rows %}
+        <tr onclick="getElementById('pktnum').click()" style="cursor: pointer">
+          <td><a href="pkt?id={{ row['id'] }}" id="pktnum"> {{ row['id'] }}</a></td>
+          <td> {{ row['time'] }}</td>
+          <td> {{ row['packet'] }}</td>
+          <td> {% if row['note'] %} {{ row['note'] }} {% endif %} </td>
+          <td> {{ row['len'] }}</td>
+        </tr>
+      {% endfor %}
+      </tbody></table>
+   </body>
+</html>

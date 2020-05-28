@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+    <head>
+      <title>{{ title }}</title>
+      <link rel="stylesheet" href='../static/style.css'/>
+    </head>
+    <body>
+      <form action="/pkt" method="POST">
+      <input type="hidden" name="id" value="{{ packet['id'] }}">
+      <h2>Packet</h2>
+      <table class="responstable" id="packets" style="width:100%"><tbody><tr></tr>
+        <td width='20'>{{ packet['id'] }}</td>
+        <td width='200'>
+            <input type="text" size="18" name="note" value='{% if packet['note'] %} {{ packet['note'] }} {% endif %}'></td>
+        <td>{{ packet['packet'] }}</td>
+    </tr>
+    </tbody></table>
+        <div class="button_c" align="left">
+            <button class="button1" id=1 type="submit" name="action" value="back" rel="nofollow noopener">
+                Back
+            </button>
+            <button class="button1" id=2 type="submit" name="action" value="tx" rel="nofollow noopener">
+                Tx Packet
+            </button>
+            {% if packet['stored'] %}
+                <button class="button1" id=3 type="submit" name="action" value="update" rel="nofollow noopener">
+                    Update
+                </button>
+            </a>
+            {% else %}
+                <button class="button1" id=4 type="submit" name="action" value="store" rel="nofollow noopener">
+                    Store
+                </button>
+            {% endif %}
+            <button class="button1" id=5 type="submit" name="action" value="delete" rel="nofollow noopener">
+                Delete
+            </button>
+        </div>
+    </form>
+    </body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+   <head>
+      <title>Stored packets</title>
+      <link rel="stylesheet" href='../static/style.css'/>
+  </head>
+    <body>
+      <h1>Storage</h1>
+      <div class="button_c" align="left">
+        <a class="button1" href="/" rel="nofollow noopener">
+          Sniffer
+        </a>
+      </div>
+      <form action="/stored" method="POST">
+      <table class="responstable" id="packets" style="width:100%"><tbody><tr>
+        <th width='20'>Id</th>
+        <th width='200'>Note</th>
+        <th>Packet</th>
+        <th width='20'>Length</th>
+        <th width='16'>Add</th>
+      </tr>
+      {% for row in rows %}
+        <tr>
+          <td><a href="pkt?id={{ row['id'] }}" id="pktnum"> {{ row['id'] }}</a></td>
+          <td> {{ row['note'] }}</td>
+          <td> {{ row['packet'] }}</td>
+          <td> {{ row['len'] }}</td>
+          <td><input type="checkbox" name="chk_{{ row['id'] }}"  /></td>
+        </tr>
+      {% endfor %}
+      </tbody></table>
+      <div class="button_c" align="left">
+      {% for row in seqs %}
+      <button class="button1" type="submit" name="action" 
+            value="add_{{ row['seqid'] }}" rel="nofollow noopener">
+          Add to sequence {{ row['seqid'] }}
+      </button>
+      {% endfor %}
+      <button class="button1" id=100 type="submit" name="action" value="newseq" rel="nofollow noopener">
+        New sequence
+      </button>
+      </div>
+      <table class="responstable" id="sequence" style="width:100%"><tbody><tr>
+        <th width='20'>Seq Id</th>
+        <th width='200'>Name</th>
+        <th>Packets</th>
+        <th width='16'>Remove</th>
+        <th width='16'>TX</th>
+      </tr>
+      {% for row in seqs %}
+        <tr>
+          <td> {{ row['seqid'] }} </td>
+          <td> 
+              <input type="text" size="18" name="seqname_{{ row['seqid'] }}" onchange="this.form.submit()"
+                  value='{% if  row['seqname']  %} {{ row['seqname'] }} {% endif %}'> </td>
+          <td> 
+            {% for pkt in row['pkts'] %}
+            [<a href="stored?action=seqdel&id={{ pkt['pktid'] }}&seq={{ row['seqid'] }}" id="pktnum">{{ pkt['pktid'] }}</a>]
+            {% endfor %}
+          </td>
+          <td width="10"><input type="checkbox" name="del_{{ row['id'] }}"  /></td>
+          <td><input type="checkbox" name="tx_{{ row['id'] }}"  /></td>
+        </tr>
+      {% endfor %}
+      </tbody></table>
+      <div class="button_c" align="left">
+        <button class="button1" id=101 type="submit" name="action" value="tx1" rel="nofollow noopener">
+            Tx Once
+        </button>
+        <button class="button1" id=102 type="submit" name="action" value="loop" rel="nofollow noopener">
+            Tx Loop
+        </button>
+        </div>
+    </form>
+   </body>
+</html>
