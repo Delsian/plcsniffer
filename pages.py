@@ -1,6 +1,8 @@
 from flask import render_template, request, redirect
 import settings
 
+PAGE_STEP = 16
+
 def index():
     print(request.form)
     action = None
@@ -20,11 +22,19 @@ def index():
         settings.plc.recording(False)
         settings.refresh = False
     elif (action=="pgdn"):
-        print("ToDo")
-
-    rec = -1 
-    res = settings.cont.forIndex(rec)
-    return render_template('index.html', rows=res, 
+        if (settings.showpos == settings.maxpos):
+            settings.showpos = settings.cont.getTop() - PAGE_STEP
+        else:
+            settings.showpos -= PAGE_STEP
+    elif (action=="pgup"):
+        if (settings.showpos < settings.maxpos):
+            settings.showpos += PAGE_STEP
+            if (settings.showpos > settings.cont.getTop()):
+                settings.showpos = settings.maxpos
+    elif (action=="top"):
+        settings.showpos = settings.maxpos
+    res = settings.cont.forIndex(settings.showpos)
+    return render_template('index.html', rows=res, pos=settings.showpos,
         record=settings.plc.getRecording(), refresh=settings.refresh)
 
 def showpkt():

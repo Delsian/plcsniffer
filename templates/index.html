@@ -9,6 +9,9 @@
     <body>
       <form action="/" method="POST">
       <h1>PLC sniffer</h1>
+      {% if pos<999999 %}
+      <h2>Packet Id from {{ pos }}</h2>
+      {% endif %}
       <div class="button_c">
         <button class="button1" align="left" id=1 type="submit" name="action" value="stored" rel="nofollow noopener">
           Stored

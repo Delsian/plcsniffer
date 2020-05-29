@@ -36,7 +36,7 @@ class Plc(object):
         return []
 
     def txbyId(self, id):
-        self.__pl.tx(self.getPkt(pkt))
+        self.__pl.tx(self.getPkt(id))
 
     def recording(self, state):
         print("Set recording ", state)

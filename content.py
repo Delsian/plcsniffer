@@ -8,7 +8,7 @@ class Content(object):
 
     def forIndex(self, pos):
         if(pos>0):
-            adp = "WHERE packets.id>{} AND packets.id<={}".format(pos-15,pos)
+            adp = "WHERE packets.id<={}".format(pos)
         else:
             adp = " "
         q=("SELECT packets.id, packets.packet, packets.time, storedpkt.note "
@@ -22,7 +22,7 @@ class Content(object):
 
     def getStored(self):
         q=("SELECT storedpkt.id, storedpkt.note, packets.packet FROM packets "
-            "INNER JOIN storedpkt ON packets.id = storedpkt.id;")
+            "INNER JOIN storedpkt ON packets.id = storedpkt.id ORDER BY storedpkt.id DESC;")
         self.cur.execute(q)
         result = self.cur.fetchall()
         for row in result:
@@ -32,10 +32,8 @@ class Content(object):
     def getPacket(self, id):
         q="SELECT id, packet FROM packets WHERE id={};".format(id)
         self.cur.execute(q)
-        p= self.cur.fetchall()
-        if len(p):
-            return p[0]
-        return None
+        p= self.cur.fetchone()
+        return p
 
     def storePkt(self, id, note):
         q="INSERT INTO storedpkt (id,note) VALUES ({},'{}');".format(id,note)
@@ -51,9 +49,9 @@ class Content(object):
         p1 = self.getPacket(id)
         q="SELECT note, id FROM storedpkt WHERE id={};".format(id)
         self.cur.execute(q)
-        p2 = self.cur.fetchall()
-        if len(p2):
-            p1['note'] = p2[0]['note']
+        p2 = self.cur.fetchone()
+        if p2:
+            p1['note'] = p2['note']
             p1['stored'] = True
         else:
             p1['stored'] = False
@@ -97,6 +95,11 @@ class Content(object):
 
     def delFromSeq(self,seq,num):
         q="DELETE FROM seqpkt WHERE seq={} AND pktnum={};".format(seq,num)
-        print(q)
         self.cur.execute(q)
         self.db.commit()
+
+    def getTop(self):
+        q = "SELECT MAX(id) FROM packets;"
+        self.cur.execute(q)
+        r = self.cur.fetchone()
+        return r["MAX(id)"]
